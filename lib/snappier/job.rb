@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "registry"
 require "sidekiq"
-require "fileutils"
 require "yaml"
 
 module Snappier
@@ -16,9 +16,12 @@ module Snappier
       args["at"] = Time.at(at.to_i / 1000).to_s
       args["state"] = JSON.parse(args["state"])
 
-      path = File.join("tmp", "snappier", type, id, "#{at}.yml")
-      FileUtils.mkdir_p(File.dirname(path))
-      File.write(path, args.to_yaml)
+      Registry.persistence.persist(
+        type: type,
+        id: id,
+        at: at,
+        args: args,
+      )
     end
   end
 end

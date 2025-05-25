@@ -1,13 +1,24 @@
 # frozen_string_literal: true
 
+require_relative "file_persistence"
+
 module Snappier
   module Registry
     def self.reset
       @for_class_name = {}
+      @persistence = nil
     end
 
     def self.all
       @for_class_name
+    end
+
+    def self.register_persistence(instance)
+      @persistence = instance
+    end
+
+    def self.persistence
+      @persistence || FilePersistence.new
     end
 
     def self.register(map)

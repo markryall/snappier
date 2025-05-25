@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), "..", "lib")
+
+require "snappier"
+
+type = ARGV.shift
+id = ARGV.shift
+
+Snappier::Replay.for(
+  type: type,
+  id: id,
+) do |entry|
+  pp entry
+end
