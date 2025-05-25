@@ -39,6 +39,15 @@ RSpec.describe Snappier::Changes do
     expect(changes).to eq({ %w[attribute] => [nil, "value"] })
   end
 
+  it "finds change when array is changed" do
+    changes = described_class.between(
+      { "attribute1" => ["value1"] },
+      { "attribute1" => ["value2"] },
+    )
+
+    expect(changes).to eq({ %w[attribute1] => [%w[value1], %w[value2]] })
+  end
+
   it "finds change when nested key is changed" do
     changes = described_class.between(
       { "hash" => { "attribute" => "value1" } },

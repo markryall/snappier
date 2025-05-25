@@ -45,7 +45,15 @@ module Snappier
     end
 
     def self.append_changes_for_collections(changes, previous_collection, current_collection, path)
-      ids = Set.new(previous_collection.map { |e| e["id"] } + current_collection.map { |e| e["id"] })
+      ids = Set.new
+      previous_collection.each { |e| ids << e["id"] if e["id"] }
+      current_collection.each { |e| ids << e["id"] if e["id"] }
+
+      if ids.empty?
+        changes[path] = [previous_collection, current_collection]
+        return
+      end
+
       ids.each do |id|
         previous_value = previous_collection.find { |r| r["id"] == id }
         current_value = current_collection.find { |r| r["id"] == id }
