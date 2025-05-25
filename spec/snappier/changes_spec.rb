@@ -130,26 +130,28 @@ RSpec.describe Snappier::Changes do
   it "finds change when element in collection is added" do
     changes = described_class.between(
       { "collection" => [] },
-      { "collection" => [{ "id" => "123", "attribute" => "value" }] },
+      { "collection" => [{ "id" => "123", "attribute1" => "value1", "attribute2" => "value2" }] },
     )
 
     expect(changes).to(
       eq(
-        %w[collection 123 attribute] => [nil, "value"],
+        %w[collection 123 attribute1] => [nil, "value1"],
+        %w[collection 123 attribute2] => [nil, "value2"],
       ),
     )
   end
 
   it "finds change when element in collection is removed" do
     changes = described_class.between(
-      { "collection" => [{ "id" => "123", "attribute" => "value" }] },
+      { "collection" => [{ "id" => "123", "attribute1" => "value1", "attribute2" => "value2" }] },
       { "collection" => [] },
     )
 
     expect(changes).to(
       eq(
-        %w[collection 123 attribute] => ["value", nil],
-      )
+        %w[collection 123 attribute1] => ["value1", nil],
+        %w[collection 123 attribute2] => ["value2", nil],
+      ),
     )
   end
 end
