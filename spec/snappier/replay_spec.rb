@@ -56,19 +56,19 @@ RSpec.describe Snappier::Replay do
             {
               at: Time.iso8601("2033-05-18T13:33:20+10:00"),
               who: nil,
-              changes: { "content" => [nil, "content2"] },
+              changes: { %w[content] => [nil, "content2"] },
               state: { "content" => "content2" }
             },
             {
               at: Time.iso8601("2033-05-18T13:33:21+10:00"),
               who: "person 1",
-              changes: { "content" => %w[content2 content1] },
+              changes: { %w[content] => %w[content2 content1] },
               state: { "content" => "content1" }
             },
             {
               at: Time.iso8601("2033-05-18T13:33:22+10:00"),
               who: "person 2",
-              changes: { "content" => %w[content1 content3] },
+              changes: { %w[content] => %w[content1 content3] },
               state: { "content" => "content3" }
             }
           ],

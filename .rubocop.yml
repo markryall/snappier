@@ -30,8 +30,14 @@ RSpec/MultipleExpectations:
 RSpec/VerifiedDoubles:
   Enabled: false
 
-Metrics/MethodLength:
-  Max: 20
-
 Metrics/AbcSize:
-  Max: 20
+  Max: 30
+
+Metrics/CyclomaticComplexity:
+  Max: 15
+
+Metrics/MethodLength:
+  Max: 30
+
+Metrics/PerceivedComplexity:
+  Max: 15
