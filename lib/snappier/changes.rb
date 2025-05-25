@@ -55,8 +55,11 @@ module Snappier
       end
 
       ids.each do |id|
-        previous_value = previous_collection.find { |r| r["id"] == id }
-        current_value = current_collection.find { |r| r["id"] == id }
+        previous_value = previous_collection.find { |r| r["id"] == id } || {}
+        current_value = current_collection.find { |r| r["id"] == id } || {}
+        previous_value.delete("id")
+        current_value.delete("id")
+
         append_changes(changes, previous_value, current_value, path + [id])
       end
     end
