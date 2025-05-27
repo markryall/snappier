@@ -21,6 +21,10 @@ sidekiq job (this specific dependency on sidekiq for async processing may be abs
 
 You may call this in an active record model callback (like `after_save`) or anywhere else in your application code.
 
+There is no specific dependency on active record but the methods `attributes`, `previously_new_record?` and
+`destroyed?` are used by default (the latter two deciding if snapshot is related to create/delete otherwise
+defaulting to update).
+
 To attribute changes to a specific user, call `Snappier::Who.current = "<current user description>"` and that
 information will be persisted with any subsequent snapshots.  In rails, you may set this in a `before_action`
 method to capture a description of the current user - this setting exists only in the current thread.
