@@ -1,28 +1,58 @@
 # Snappier
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/snappier`. To experiment with that code, run `bin/console` for an interactive prompt.
+Snappier is a gem intended to provide a data audit trail by persisting snapshots. This functionality is particularly useful for applications that require tracking changes to data over time, such as for auditing, debugging, or maintaining historical records.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
 ```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle add snappier
 ```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+gem install snappier
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+Call `Snappier::Take.for(entity)` in your application code and a snapshopt will be persisted via a
+sidekiq job.
+
+You may call this in an active record model callback (like `after_save`) or anywhere else in your application code.
+
+To attribute changes to a specific user, call `Snappier::Who.current = "<current user description>"` and that
+information will be persisted with any subsequent snapshots.  In rails, you may set this in a `before_action`
+method to capture a description of the current user - this setting exists only in the current thread.
+
+By default snapshots are persisted to `tmp/snappier`.  You can instead persist to S3 using the `snappier-aws_s3`
+extension gem and the following configuration when your application starts up:
+
+```ruby
+persistence = Snappier::AwsS3::Persistence.new(
+  region: aws_region,
+  bucket_name: bucket_name,
+  credentials: aws_credentials,
+)
+Snappier::Registry.register_persistence(persistence)
+```
+
+By default, snapshot state is persisted by calling `record.attributes`, if you want to persist more or less
+information then you can create a module and register it when your application starts up:
+
+```ruby
+module OrderSnapshot
+  def self.snap(order)
+    order.attributes.without(:created_at, :updated_at).tap do |attributes|
+      attributes["line_items"] = order.line_items.map { |line_item| line_item.attributes }
+    end
+  end
+end
+
+Snappier::Registry.register(
+  "Order" => "OrderSnapshot"
+)
+```
 
 ## Development
 
