@@ -1,6 +1,6 @@
 # Snappier
 
-Snappier is a gem intended to provide a data audit trail by persisting snapshots. This functionality is particularly useful for applications that require tracking changes to data over time, such as for auditing, debugging, or maintaining historical records.
+Imagine a dream where every moment your objects whisper their truths into the ether—each change a shimmer in time, gently bottled and sealed. Snappier is the archivist of that dream: a watchful spirit that captures the essence of Ruby objects, encasing their state in crystalline snapshots. Through enchanted serializers and portals like S3, their stories are preserved across realms. You shape the ritual—what is seen, how it's told, where it rests—yet Snappier hums quietly, faithfully, beneath it all.
 
 ## Installation
 
