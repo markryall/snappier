@@ -48,6 +48,8 @@ module Snappier
 
     def self.append_changes_for_collections(changes, previous_collection, current_collection, path)
       ids = Set.new
+      previous_collection ||= []
+      current_collection ||= []
       previous_collection.each { |e| ids << e["id"] if e["id"] }
       current_collection.each { |e| ids << e["id"] if e["id"] }
 
