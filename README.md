@@ -17,7 +17,7 @@ gem install snappier
 ## Usage
 
 Call `Snappier::Take.for(entity)` in your application code and a snapshopt will be persisted via a
-sidekiq job.
+sidekiq job (this specific dependency on sidekiq for async processing may be abstracted later).
 
 You may call this in an active record model callback (like `after_save`) or anywhere else in your application code.
 
@@ -52,6 +52,16 @@ end
 Snappier::Registry.register(
   "Order" => "OrderSnapshot"
 )
+```
+
+It is possible to replay the snapshots for a specific record which will calculate any change for presentation
+in a UI:
+
+```ruby
+Snappier::Replay.for(
+  type: Order,
+  id: "1"
+) { |change| pp change }
 ```
 
 ## Development
