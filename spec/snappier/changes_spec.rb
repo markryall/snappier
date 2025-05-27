@@ -3,6 +3,12 @@
 require "spec_helper"
 
 RSpec.describe Snappier::Changes do
+  it "finds no change between nil and nil" do
+    changes = described_class.between(nil, nil)
+
+    expect(changes).to eq({})
+  end
+
   it "finds no change between identical hashes" do
     changes = described_class.between(
       { "attribute1" => "value1" },

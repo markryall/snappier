@@ -9,6 +9,8 @@ module Snappier
     end
 
     def self.append_changes(changes, previous_state, current_state, path = [])
+      previous_state ||= {}
+      current_state ||= {}
       keys = Set.new(previous_state.keys + current_state.keys)
 
       keys.each do |key|

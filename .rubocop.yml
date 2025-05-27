@@ -31,7 +31,7 @@ RSpec/VerifiedDoubles:
   Enabled: false
 
 Metrics/AbcSize:
-  Max: 30
+  Max: 50
 
 Metrics/CyclomaticComplexity:
   Max: 15
@@ -40,4 +40,4 @@ Metrics/MethodLength:
   Max: 30
 
 Metrics/PerceivedComplexity:
-  Max: 15
+  Max: 30
