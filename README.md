@@ -16,21 +16,19 @@ gem install snappier
 
 ## Usage
 
-Call `Snappier::Take.for(entity)` in your application code and a snapshopt will be persisted via a
-sidekiq job (this specific dependency on sidekiq for async processing may be abstracted later).
+Right, so you’ve decided to track your data like a proper psycho—every twist, every turn, every bloody mutation. You take Snappier, slap it in your Gemfile like it owes you money, and set it up to watch your objects spill their guts. You tell it how to remember—JSON, YAML, dark magic—whatever. Then you point it somewhere to stash the loot: S3, disk, down the pub. When the time comes, you take the snapshot. Click. Another wee lie safely stored. Choose life. Choose history. Choose Snappier.
+
+Call `Snappier::Take.for(entity)` in your application code and a snapshopt will be persisted via a sidekiq job (this specific dependency on sidekiq for async processing may be abstracted later).
 
 You may call this in an active record model callback (like `after_save`) or anywhere else in your application code.
 
-There is no specific dependency on active record but the methods `attributes`, `previously_new_record?` and
-`destroyed?` are used by default (the latter two deciding if snapshot is related to create/delete otherwise
-defaulting to update).
+There is no specific dependency on active record but the methods `attributes`, `previously_new_record?` and `destroyed?` are used by default (the latter two deciding if snapshot is related to create/delete otherwise defaulting to update).
 
 To attribute changes to a specific user, call `Snappier::Who.current = "<current user description>"` and that
 information will be persisted with any subsequent snapshots.  In rails, you may set this in a `before_action`
 method to capture a description of the current user - this setting exists only in the current thread.
 
-By default snapshots are persisted to `tmp/snappier`.  You can instead persist to S3 using the `snappier-aws_s3`
-extension gem and the following configuration when your application starts up:
+By default snapshots are persisted to `tmp/snappier`.  You can instead persist to S3 using the `snappier-aws_s3` extension gem and the following configuration when your application starts up:
 
 ```ruby
 persistence = Snappier::AwsS3::Persistence.new(
@@ -41,8 +39,7 @@ persistence = Snappier::AwsS3::Persistence.new(
 Snappier::Registry.register_persistence(persistence)
 ```
 
-By default, snapshot state is persisted by calling `record.attributes`, if you want to persist more or less
-information then you can create a module and register it when your application starts up:
+By default, snapshot state is persisted by calling `record.attributes`, if you want to persist more or less information then you can create a module and register it when your application starts up:
 
 ```ruby
 module OrderSnapshot
@@ -58,8 +55,7 @@ Snappier::Registry.register(
 )
 ```
 
-It is possible to replay the snapshots for a specific record which will calculate any change for presentation
-in a UI:
+It is possible to replay the snapshots for a specific record which will calculate any change for presentation in a UI:
 
 ```ruby
 Snappier::Replay.for(
