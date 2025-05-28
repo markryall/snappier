@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "fileutils"
-
 module Snappier
   module Changes
     def self.between(previous_state, current_state)
@@ -47,24 +45,28 @@ module Snappier
     end
 
     def self.append_changes_for_collections(changes, previous_collection, current_collection, path)
-      ids = Set.new
-      previous_collection ||= []
-      current_collection ||= []
-      previous_collection.each { |e| ids << e["id"] if e["id"] }
-      current_collection.each { |e| ids << e["id"] if e["id"] }
+      ids = ids_for_collections(previous_collection, current_collection)
 
       if ids.empty?
-        changes[path] = [previous_collection, current_collection]
+        changes[path] = [previous_collection, current_collection] unless previous_collection == current_collection
         return
       end
 
       ids.each do |id|
-        previous_value = previous_collection.find { |r| r["id"] == id } || {}
-        current_value = current_collection.find { |r| r["id"] == id } || {}
-        previous_value.delete("id")
-        current_value.delete("id")
+        previous_value = (previous_collection || []).find { |r| r["id"] == id } || {}
+        current_value = (current_collection || []).find { |r| r["id"] == id } || {}
+        previous_value&.delete("id")
+        current_value&.delete("id")
 
         append_changes(changes, previous_value, current_value, path + [id])
+      end
+    end
+
+    def self.ids_for_collections(*collections)
+      Set.new.tap do |ids|
+        collections.each do |collection|
+          (collection || []).each { |e| ids << e["id"] if e["id"] }
+        end
       end
     end
   end

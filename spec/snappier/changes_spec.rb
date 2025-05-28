@@ -45,6 +45,15 @@ RSpec.describe Snappier::Changes do
     expect(changes).to eq({ %w[attribute] => [nil, "value"] })
   end
 
+  it "finds no change when array is unchanged" do
+    changes = described_class.between(
+      { "attribute1" => ["value"] },
+      { "attribute1" => ["value"] },
+    )
+
+    expect(changes).to eq({})
+  end
+
   it "finds change when array is changed" do
     changes = described_class.between(
       { "attribute1" => ["value1"] },
@@ -60,7 +69,7 @@ RSpec.describe Snappier::Changes do
       { "attribute1" => ["value1"] },
     )
 
-    expect(changes).to eq({ %w[attribute1] => [[], %w[value1]] })
+    expect(changes).to eq({ %w[attribute1] => [nil, %w[value1]] })
   end
 
   it "finds change when array is removed" do
@@ -69,7 +78,7 @@ RSpec.describe Snappier::Changes do
       {},
     )
 
-    expect(changes).to eq({ %w[attribute1] => [%w[value1], []] })
+    expect(changes).to eq({ %w[attribute1] => [%w[value1], nil] })
   end
 
   it "finds change when nested key is changed" do
@@ -97,6 +106,15 @@ RSpec.describe Snappier::Changes do
     )
 
     expect(changes).to eq({ %w[hash attribute] => [nil, "value"] })
+  end
+
+  it "finds no change when association is unchanged" do
+    changes = described_class.between(
+      { "hash" => { "id" => "123", "attribute" => "value" } },
+      { "hash" => { "id" => "123", "attribute" => "value" } },
+    )
+
+    expect(changes).to eq({})
   end
 
   it "finds change when association is changed" do
@@ -142,6 +160,15 @@ RSpec.describe Snappier::Changes do
     )
   end
 
+  it "finds no change when no element in collection is changed" do
+    changes = described_class.between(
+      { "collection" => [{ "id" => "123", "attribute" => "value" }] },
+      { "collection" => [{ "id" => "123", "attribute" => "value" }] },
+    )
+
+    expect(changes).to eq({})
+  end
+
   it "finds change when element in collection is changed" do
     changes = described_class.between(
       { "collection" => [{ "id" => "123", "attribute" => "value1" }] },
@@ -175,6 +202,52 @@ RSpec.describe Snappier::Changes do
       eq(
         %w[collection 123 attribute1] => ["value1", nil],
         %w[collection 123 attribute2] => ["value2", nil],
+      ),
+    )
+  end
+
+  it "finds all changes in complicated structure" do
+    changes = described_class.between(
+      {
+        "attribute" => "value1",
+        "array" => ["array_value1"],
+        "collection" => [
+          {
+            "id" => "123",
+            "nested_collection" => [
+              {
+                "id" => "456",
+                "nested_attribute" => "nested_value1"
+              }
+            ],
+            "attribute" => "value1"
+          }
+        ]
+      },
+      {
+        "attribute" => "value2",
+        "array" => ["array_value2"],
+        "collection" => [
+          {
+            "id" => "123",
+            "nested_collection" => [
+              {
+                "id" => "456",
+                "nested_attribute" => "nested_value2"
+              }
+            ],
+            "attribute" => "value2"
+          }
+        ]
+      },
+    )
+
+    expect(changes).to(
+      eq(
+        %w[array] => [%w[array_value1], %w[array_value2]],
+        %w[attribute] => %w[value1 value2],
+        %w[collection 123 attribute] => %w[value1 value2],
+        %w[collection 123 nested_collection 456 nested_attribute] => %w[nested_value1 nested_value2],
       ),
     )
   end
